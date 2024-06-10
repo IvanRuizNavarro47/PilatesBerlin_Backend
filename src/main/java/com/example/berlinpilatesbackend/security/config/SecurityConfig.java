@@ -1,37 +1,36 @@
 package com.example.berlinpilatesbackend.security.config;
 
-
 import com.example.berlinpilatesbackend.enums.Rol;
 import com.example.berlinpilatesbackend.security.filter.JWTFilterChain;
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JWTFilterChain jwtFilterChain;
     private final AuthenticationProvider authenticationProvider;
 
+    public SecurityConfig(JWTFilterChain jwtFilterChain, AuthenticationProvider authenticationProvider) {
+        this.jwtFilterChain = jwtFilterChain;
+        this.authenticationProvider = authenticationProvider;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req ->
-                        req
-                                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/cliente/**").hasAnyAuthority(Rol.ADMIN.name())
                                 .requestMatchers("/admin/**").hasAnyAuthority(Rol.ADMIN.name())
@@ -39,14 +38,12 @@ public class SecurityConfig {
                                 .requestMatchers("/clases/cliente/**").hasAnyAuthority(Rol.USUARIO.name())
                                 .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class)
-        ;
+                .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-
     }
-
-
 }
