@@ -6,6 +6,7 @@ import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,17 +28,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())//medida de seguridad para agregar a los métodos post una autenticación basada en tokens
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
+                        authorizeRequests//
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/cliente/**").hasAnyAuthority(Rol.ADMIN.name())
+                                .requestMatchers("/auth/**").permitAll()//todos los que coincidan con esta ruta van a ser públicos
+                                .requestMatchers("/cliente/**").permitAll()
                                 .requestMatchers("/admin/**").hasAnyAuthority(Rol.ADMIN.name())
                                 .requestMatchers("/clases/gestion/**").hasAnyAuthority(Rol.MONITOR.name())
                                 .requestMatchers("/clases/cliente/**").hasAnyAuthority(Rol.USUARIO.name())
-                                .anyRequest().authenticated()
+                                .anyRequest().authenticated()//En cambio, cuañquier otro request
                 )
+
+
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
