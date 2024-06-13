@@ -12,9 +12,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@CrossOrigin(origins = {"/http://localhost:4200"})
+
 public class SecurityConfig {
 
     private final JWTFilterChain jwtFilterChain;
@@ -29,24 +38,41 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())//medida de seguridad para agregar a los métodos post una autenticación basada en tokens
+
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests//
+                        authorizeRequests
+
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/auth/**").permitAll()//todos los que coincidan con esta ruta van a ser públicos
                                 .requestMatchers("/cliente/**").permitAll()
-                                .requestMatchers("/admin/**").hasAnyAuthority(Rol.ADMIN.name())
-                                .requestMatchers("/clases/gestion/**").hasAnyAuthority(Rol.MONITOR.name())
-                                .requestMatchers("/clases/cliente/**").hasAnyAuthority(Rol.USUARIO.name())
+                                .requestMatchers("/admin/**").permitAll()
+                                .requestMatchers("/clases/gestion/**").permitAll()
+                                .requestMatchers("/clases/cliente/**").permitAll()
                                 .anyRequest().authenticated()//En cambio, cuañquier otro request
+
                 )
 
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .cors(withDefaults()) // Habilitar CORS
+
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cliente")
+@CrossOrigin(origins = {"/http://localhost:4200"})
 @SecurityRequirement(name = "Bearer Authentication")
 public class ClienteController {
 
