@@ -30,8 +30,5 @@ public class ClienteController {
     }
 
 
-    @GetMapping("/buscar")
-    public List<ClienteDTO> buscarPorDNI(@RequestParam(name = "letra", required = false) String letraDNI, @RequestParam(required = false) String nombre){
-        return clienteService.buscarClientePorFiltror(nombre,letraDNI);
-    }
+
 }

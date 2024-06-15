@@ -3,6 +3,7 @@ package com.example.berlinpilatesbackend.service;
 import com.example.berlinpilatesbackend.dto.ClienteDTO;
 import com.example.berlinpilatesbackend.mapper.ClienteMapper;
 import com.example.berlinpilatesbackend.model.Cliente;
+import com.example.berlinpilatesbackend.model.Usuario;
 import com.example.berlinpilatesbackend.repository.IClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,27 +23,37 @@ public class ClienteService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    public List<ClienteDTO> getAll(){
-        return clienteMapper.toDTO(clienteRepository.findAll());
-    }
-    public Cliente save(ClienteDTO dto){
+    public Cliente save(ClienteDTO dto) {
         Cliente entity = clienteMapper.toEntity(dto);
-        entity.getUsuario().setPassword(passwordEncoder.encode(entity.getUsuario().getPassword()));
+
+        // Asegurarse de que el usuario no sea null
+        if (entity.getUsuario() == null) {
+            Usuario usuario = new Usuario();
+            usuario.setUsername(dto.getUsuarioDTO().getUsername());
+            usuario.setPassword(passwordEncoder.encode(dto.getUsuarioDTO().getPassword()));
+            usuario.setRol(dto.getUsuarioDTO().getRol());
+            entity.setUsuario(usuario);
+        } else {
+            entity.getUsuario().setPassword(passwordEncoder.encode(entity.getUsuario().getPassword()));
+        }
+
         return clienteRepository.save(entity);
     }
 
+    public List<ClienteDTO> getAll() {
+        return clienteMapper.toDTO(clienteRepository.findAll());
+    }
 
-    public List<ClienteDTO> buscarClientePorFiltror(String nombre, String letraDNI){
-        if(nombre!= null && letraDNI != null){
-            return clienteMapper.toDTO(clienteRepository.buscarPorLetraDNIYNombre(letraDNI,nombre));
-        } else if (nombre==null && letraDNI!=null) {
+    public List<ClienteDTO> buscarClientePorFiltro(String nombre, String letraDNI) {
+        if (nombre != null && letraDNI != null) {
+            return clienteMapper.toDTO(clienteRepository.buscarPorLetraDNIYNombre(letraDNI, nombre));
+        } else if (nombre == null && letraDNI != null) {
             return clienteMapper.toDTO(clienteRepository.buscarPorLetraDNI(letraDNI));
-        }else if(nombre != null){
+        } else if (nombre != null) {
             return clienteMapper.toDTO(clienteRepository.buscarPorNombre(nombre));
-        }else{
+        } else {
             return clienteMapper.toDTO(clienteRepository.findAll());
         }
     }
-
 }
+

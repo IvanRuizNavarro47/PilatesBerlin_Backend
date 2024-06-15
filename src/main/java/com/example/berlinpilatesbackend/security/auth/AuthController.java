@@ -81,13 +81,10 @@ public class AuthController {
 
     @PostMapping("/register")
     public AuthDTO register(@RequestBody ClienteDTO clienteDTO) {
+        Cliente clienteNuevo = clienteService.save(clienteDTO);
+        String token = jwtService.generateToken(clienteNuevo.getUsuario());
 
-        Cliente clieneNuevo = clienteService.save(clienteDTO);
-
-        String token = jwtService.generateToken(clieneNuevo.getUsuario());
-
-        return AuthDTO
-                .builder()
+        return AuthDTO.builder()
                 .token(token)
                 .info("Usuario creado correctamente")
                 .build();
