@@ -3,6 +3,8 @@ package com.example.berlinpilatesbackend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "cliente" , catalog = "postgres", schema = "berlinpilates")
 @Getter
@@ -35,6 +37,9 @@ public class Cliente {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    @ManyToMany(mappedBy = "clientes")
+    private List<Clase> clases;
 
 
 

@@ -3,13 +3,16 @@ package com.example.berlinpilatesbackend.service;
 import com.example.berlinpilatesbackend.dto.ClienteDTO;
 import com.example.berlinpilatesbackend.mapper.ClienteMapper;
 import com.example.berlinpilatesbackend.model.Cliente;
+import com.example.berlinpilatesbackend.model.Clase;
 import com.example.berlinpilatesbackend.model.Usuario;
+import com.example.berlinpilatesbackend.repository.IClaseRepository;
 import com.example.berlinpilatesbackend.repository.IClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -23,10 +26,12 @@ public class ClienteService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private IClaseRepository claseRepository;
+
     public Cliente save(ClienteDTO dto) {
         Cliente entity = clienteMapper.toEntity(dto);
 
-        // Asegurarse de que el usuario no sea null
         if (entity.getUsuario() == null) {
             Usuario usuario = new Usuario();
             usuario.setUsername(dto.getUsuarioDTO().getUsername());
@@ -55,5 +60,18 @@ public class ClienteService {
             return clienteMapper.toDTO(clienteRepository.findAll());
         }
     }
-}
 
+    public Cliente addClaseToCliente(Integer clienteId, Integer claseId) {
+        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new RuntimeException("Cliente not found"));
+        Clase clase = claseRepository.findById(claseId).orElseThrow(() -> new RuntimeException("Clase not found"));
+        cliente.getClases().add(clase);
+        return clienteRepository.save(cliente);
+    }
+
+    public Cliente removeClaseFromCliente(Integer clienteId, Integer claseId) {
+        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new RuntimeException("Cliente not found"));
+        Clase clase = claseRepository.findById(claseId).orElseThrow(() -> new RuntimeException("Clase not found"));
+        cliente.getClases().remove(clase);
+        return clienteRepository.save(cliente);
+    }
+}
