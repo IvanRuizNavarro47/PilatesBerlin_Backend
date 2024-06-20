@@ -2,6 +2,7 @@ package com.example.berlinpilatesbackend.repository;
 
 
 import com.example.berlinpilatesbackend.model.Cliente;
+import com.example.berlinpilatesbackend.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,10 @@ public interface IClienteRepository extends JpaRepository<Cliente, Integer> {
 
     @Query(value = "select c.* from {h-schema}cliente c where c.nombre like %:nombre% and c.dni like %:letraDNI ",nativeQuery = true)
     List<Cliente> buscarPorLetraDNIYNombre(String letraDNI, String nombre);
+
+    Cliente findByUsuario(Usuario usuario);
+
+
 
 
 }

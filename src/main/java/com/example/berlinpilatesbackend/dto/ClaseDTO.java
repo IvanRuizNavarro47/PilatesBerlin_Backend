@@ -17,6 +17,6 @@ public class ClaseDTO {
     private TipoClase tipoClase;
     private Integer capacidadMaxima;
     private String descripcion;
-    private Date fecha; // Añadir el campo de fecha
+    private Date fecha;
     private List<Integer> clienteIds;
 }

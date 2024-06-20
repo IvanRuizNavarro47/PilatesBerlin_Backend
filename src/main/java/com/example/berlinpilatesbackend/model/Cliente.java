@@ -41,6 +41,11 @@ public class Cliente {
     @ManyToMany(mappedBy = "clientes")
     private List<Clase> clases;
 
+    @OneToMany(mappedBy = "cliente")
+    private List<Comentario> comentarios;
+
+
+
 
 
 }

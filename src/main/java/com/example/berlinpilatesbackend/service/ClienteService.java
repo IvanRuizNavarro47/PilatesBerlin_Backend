@@ -74,4 +74,14 @@ public class ClienteService {
         cliente.getClases().remove(clase);
         return clienteRepository.save(cliente);
     }
+
+    public Cliente findByUsuario(Usuario usuario) {
+        return clienteRepository.findByUsuario(usuario);
+    }
+
+    public Cliente save(Cliente cliente) {
+        return clienteRepository.save(cliente);
+    }
+
+
 }
