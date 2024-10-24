@@ -1,6 +1,7 @@
 package com.example.berlinpilatesbackend.service;
 
 import com.example.berlinpilatesbackend.dto.ClienteDTO;
+import com.example.berlinpilatesbackend.enums.Rol;
 import com.example.berlinpilatesbackend.mapper.ClienteMapper;
 import com.example.berlinpilatesbackend.model.Cliente;
 import com.example.berlinpilatesbackend.model.Clase;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -47,6 +49,16 @@ public class ClienteService {
 
     public List<ClienteDTO> getAll() {
         return clienteMapper.toDTO(clienteRepository.findAll());
+    }
+
+
+    // Nuevo método para obtener solo los clientes cuyo usuario tiene el rol MONITOR
+    public List<ClienteDTO> getMonitores() {
+        return clienteMapper.toDTO(
+                clienteRepository.findAll().stream()
+                        .filter(cliente -> cliente.getUsuario().getRol() == Rol.MONITOR)
+                        .collect(Collectors.toList())
+        );
     }
 
     public List<ClienteDTO> buscarClientePorFiltro(String nombre, String letraDNI) {

@@ -42,6 +42,7 @@ public class JWTService {
         return Jwts
                 .builder()
                 .claim("tokenDataDTO", tokenDataDTO)
+                .claim("rol", usuario.getRol().name())
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

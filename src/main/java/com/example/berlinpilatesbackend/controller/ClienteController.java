@@ -29,6 +29,9 @@ public class ClienteController {
         return null;
     }
 
-
+    @GetMapping("/monitores")
+    public List<ClienteDTO> obtenerMonitores(){
+        return clienteService.getMonitores();
+    }
 
 }
