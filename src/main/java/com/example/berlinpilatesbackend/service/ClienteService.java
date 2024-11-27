@@ -61,6 +61,33 @@ public class ClienteService {
         );
     }
 
+    public Cliente createMonitor(ClienteDTO dto) {
+        Cliente monitor = clienteMapper.toEntity(dto);
+        return clienteRepository.save(monitor);
+    }
+
+
+    public Cliente updateMonitor(Integer id, ClienteDTO dto) {
+        Cliente existingMonitor = clienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Monitor no encontrado"));
+
+        existingMonitor.setNombre(dto.getNombre());
+        existingMonitor.setApellido1(dto.getApellido1());
+        existingMonitor.setApellido2(dto.getApellido2());
+        existingMonitor.setDni(dto.getDni());
+        existingMonitor.setEmail(dto.getEmail());
+
+        return clienteRepository.save(existingMonitor);
+    }
+
+
+    public void deleteMonitor(Integer id) {
+        if (!clienteRepository.existsById(id)) {
+            throw new RuntimeException("Monitor no encontrado");
+        }
+        clienteRepository.deleteById(id);
+    }
+
     public List<ClienteDTO> buscarClientePorFiltro(String nombre, String letraDNI) {
         if (nombre != null && letraDNI != null) {
             return clienteMapper.toDTO(clienteRepository.buscarPorLetraDNIYNombre(letraDNI, nombre));
