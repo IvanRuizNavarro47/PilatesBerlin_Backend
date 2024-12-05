@@ -37,15 +37,18 @@ public class ClienteService {
         if (entity.getUsuario() == null) {
             Usuario usuario = new Usuario();
             usuario.setUsername(dto.getUsuarioDTO().getUsername());
-            usuario.setPassword(passwordEncoder.encode(dto.getUsuarioDTO().getPassword()));
+            usuario.setPassword(passwordEncoder.encode(dto.getUsuarioDTO().getPassword())); // Encripta la contraseña
             usuario.setRol(dto.getUsuarioDTO().getRol());
             entity.setUsuario(usuario);
         } else {
-            entity.getUsuario().setPassword(passwordEncoder.encode(entity.getUsuario().getPassword()));
+            entity.getUsuario().setPassword(passwordEncoder.encode(entity.getUsuario().getPassword())); // Encripta también en actualización
         }
 
-        return clienteRepository.save(entity);
+        return clienteRepository.save(entity); // Guarda siempre la contraseña encriptada
     }
+
+
+
 
     public List<ClienteDTO> getAll() {
         return clienteMapper.toDTO(clienteRepository.findAll());
@@ -67,18 +70,26 @@ public class ClienteService {
     }
 
 
-    public Cliente updateMonitor(Integer id, ClienteDTO dto) {
-        Cliente existingMonitor = clienteRepository.findById(id)
+    public Cliente updateMonitor(Integer id, ClienteDTO monitorDTO) {
+        Cliente clienteExistente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Monitor no encontrado"));
 
-        existingMonitor.setNombre(dto.getNombre());
-        existingMonitor.setApellido1(dto.getApellido1());
-        existingMonitor.setApellido2(dto.getApellido2());
-        existingMonitor.setDni(dto.getDni());
-        existingMonitor.setEmail(dto.getEmail());
+        clienteExistente.setNombre(monitorDTO.getNombre());
+        clienteExistente.setApellido1(monitorDTO.getApellido1());
+        clienteExistente.setApellido2(monitorDTO.getApellido2());
+        clienteExistente.setDni(monitorDTO.getDni());
+        clienteExistente.setEmail(monitorDTO.getEmail());
 
-        return clienteRepository.save(existingMonitor);
+        Usuario usuario = clienteExistente.getUsuario();
+        usuario.setUsername(monitorDTO.getUsuarioDTO().getUsername());
+        if (monitorDTO.getUsuarioDTO().getPassword() != null && !monitorDTO.getUsuarioDTO().getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(monitorDTO.getUsuarioDTO().getPassword())); // Encriptamos si hay nueva contraseña
+        }
+
+        return clienteRepository.save(clienteExistente);
     }
+
+
 
 
     public void deleteMonitor(Integer id) {

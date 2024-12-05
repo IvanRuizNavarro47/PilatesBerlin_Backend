@@ -1,5 +1,6 @@
 package com.example.berlinpilatesbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class Cliente {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_usuario")
+    @JsonManagedReference // Marca esta relación como manejada
     private Usuario usuario;
 
     @ManyToMany(mappedBy = "clientes")

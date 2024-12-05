@@ -1,6 +1,7 @@
 package com.example.berlinpilatesbackend.model;
 
 import com.example.berlinpilatesbackend.enums.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"token"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})  // Ignorar propiedades de Hibernate
+
 public class Usuario implements UserDetails {
 
     @Id

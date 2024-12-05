@@ -10,6 +10,7 @@ import com.example.berlinpilatesbackend.service.ClienteService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +26,9 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private IClienteRepository clienteRepository;
 
     @Autowired
@@ -36,7 +40,6 @@ public class ClienteController {
         return clienteService.getAll();
     }
 
-    // Crear un cliente (ya definido, retorna null por ahora)
     @PostMapping
     public Cliente crearMonitor(@RequestBody ClienteDTO dto) {
         Usuario usuario;
@@ -54,7 +57,8 @@ public class ClienteController {
             usuario = new Usuario();
             usuario.setRol(Rol.MONITOR);  // Usar el enum Rol.MONITOR
             usuario.setUsername(dto.getUsuarioDTO().getUsername());
-            usuario.setPassword(dto.getUsuarioDTO().getPassword());
+            // Encripta la contraseña
+            usuario.setPassword(passwordEncoder.encode(dto.getUsuarioDTO().getPassword()));
             usuario = usuarioRepository.save(usuario); // Guardar el nuevo usuario en la base de datos
         } else {
             // Si se proporciona un idUsuario, buscarlo en la base de datos
@@ -74,13 +78,13 @@ public class ClienteController {
         return clienteRepository.save(nuevoMonitor); // Guardar el nuevo monitor en la base de datos
     }
 
+
     // Obtener solo monitores
     @GetMapping("/monitores")
     public List<ClienteDTO> obtenerMonitores() {
         return clienteService.getMonitores();
     }
 
-    // Editar un monitor
     @PutMapping("/{id}")
     public Cliente updateMonitor(@PathVariable Integer id, @RequestBody ClienteDTO monitorDTO) {
         return clienteService.updateMonitor(id, monitorDTO);
