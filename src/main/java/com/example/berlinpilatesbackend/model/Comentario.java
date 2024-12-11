@@ -19,13 +19,16 @@ public class Comentario {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "contenido")
-    private String texto;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    @JoinColumn(name = "usuario_id") // Cambio: En lugar de cliente_id, ahora usuario_id
+    private Usuario usuario;
+
+    @Column(name = "contenido")
+    private String contenido;
 
     @Column(name = "fecha_comentario")
-    private LocalDateTime fecha;
+    private LocalDateTime fechaComentario;
+
+
 }

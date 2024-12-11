@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IComentarioRepository extends JpaRepository<Comentario, Integer> {
-    // Métodos personalizados si es necesario
 }

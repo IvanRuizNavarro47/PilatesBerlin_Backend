@@ -1,20 +1,16 @@
 package com.example.berlinpilatesbackend.controller;
 
 import com.example.berlinpilatesbackend.dto.ComentarioDTO;
-import com.example.berlinpilatesbackend.mapper.ComentarioMapper;
 import com.example.berlinpilatesbackend.model.Comentario;
-import com.example.berlinpilatesbackend.model.Cliente;
-import com.example.berlinpilatesbackend.model.Usuario;
+import com.example.berlinpilatesbackend.security.jwt.JWTService;
 import com.example.berlinpilatesbackend.service.ComentarioService;
-import com.example.berlinpilatesbackend.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/comentarios")
@@ -24,32 +20,36 @@ public class ComentarioController {
     private ComentarioService comentarioService;
 
     @Autowired
-    private ClienteService clienteService;
+    private JWTService jwtService;
 
-    @Autowired
-    private ComentarioMapper comentarioMapper;
-
-    @PostMapping("/crear")
-    public ResponseEntity<ComentarioDTO> createComentario(@RequestBody ComentarioDTO comentarioDTO, @AuthenticationPrincipal Usuario usuario) {
-        Cliente cliente = clienteService.findByUsuario(usuario);
-        if (cliente == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        Comentario comentario = comentarioMapper.toEntity(comentarioDTO);
-        comentario.setCliente(cliente);
-        comentario.setFecha(LocalDateTime.now());
-
-        Comentario savedComentario = comentarioService.save(comentario);
-        ComentarioDTO savedComentarioDTO = comentarioMapper.toDTO(savedComentario);
-
-        return ResponseEntity.ok(savedComentarioDTO);
+    // Obtener todos los comentarios
+    @GetMapping
+    public List<ComentarioDTO> listarComentarios() {
+        return comentarioService.listarTodosLosComentarios();
     }
 
-    @GetMapping
-    public List<ComentarioDTO> getAllComentarios() {
-        List<Comentario> comentarios = comentarioService.findAll();
-        return comentarioMapper.toDTOs(comentarios);
+    // Endpoint para crear un nuevo comentario
+    @PostMapping
+    public ResponseEntity<?> crearComentario(
+            @RequestBody Map<String, String> body,
+            @RequestHeader("Authorization") String authHeader) {
+
+        try {
+            // Extraer el token del encabezado Authorization
+            String token = authHeader.replace("Bearer ", "");
+
+            // Extraer el username desde el token usando JWTService
+            String username = jwtService.extractTokenData(token).getUsername();
+
+            // Obtener el contenido del comentario desde el cuerpo de la petición
+            String contenido = body.get("contenido");
+
+            // Crear el comentario usando el servicio
+            Comentario comentario = comentarioService.crearComentario(contenido, username);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(comentario);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 }
-

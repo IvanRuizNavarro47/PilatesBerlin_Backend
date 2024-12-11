@@ -9,8 +9,5 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ComentarioDTO {
-    private Integer id;
-    private String texto;
-    private LocalDateTime fecha;
-    private ClienteDTO cliente;
+    private String contenido;
 }

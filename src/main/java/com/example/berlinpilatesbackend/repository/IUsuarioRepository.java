@@ -11,4 +11,9 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findTopByUsername(String username);
 
+
+    Optional<Usuario> findByUsername(String username);
+
+
+
 }

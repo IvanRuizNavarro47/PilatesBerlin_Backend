@@ -37,6 +37,13 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findTopByUsername(username).orElse(null);
     }
 
+    public Usuario findUsuarioByUsername(String username) {
+        System.out.println("Buscando usuario: " + username);
+        return usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+
     public Usuario save(UsuarioDTO dto){
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         return  usuarioRepository.save(usuarioMapper.toEntity(dto));

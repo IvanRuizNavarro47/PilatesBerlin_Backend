@@ -41,6 +41,9 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Token token;
 
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Cliente cliente; // Relación unidireccional o bidireccional con Cliente
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
