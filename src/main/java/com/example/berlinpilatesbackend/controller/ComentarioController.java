@@ -1,6 +1,7 @@
 package com.example.berlinpilatesbackend.controller;
 
 import com.example.berlinpilatesbackend.dto.ComentarioDTO;
+import com.example.berlinpilatesbackend.mapper.ComentarioMapper;
 import com.example.berlinpilatesbackend.model.Comentario;
 import com.example.berlinpilatesbackend.security.jwt.JWTService;
 import com.example.berlinpilatesbackend.service.ComentarioService;
@@ -18,6 +19,11 @@ public class ComentarioController {
 
     @Autowired
     private ComentarioService comentarioService;
+
+
+    @Autowired
+    private ComentarioMapper comentarioMapper;
+
 
     @Autowired
     private JWTService jwtService;
@@ -52,4 +58,20 @@ public class ComentarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<ComentarioDTO> editarComentario(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> request) {
+        String nuevoContenido = request.get("nuevoContenido");
+        Comentario comentarioEditado = comentarioService.editarComentario(id, nuevoContenido);
+        return ResponseEntity.ok(comentarioMapper.toDTO(comentarioEditado));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarComentario(@PathVariable Integer id) {
+        comentarioService.eliminarComentario(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

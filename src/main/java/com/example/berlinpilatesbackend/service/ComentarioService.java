@@ -55,4 +55,27 @@ public class ComentarioService {
                 .map(comentarioMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+
+    public Comentario editarComentario(Integer id, String nuevoContenido) {
+        // Buscar el comentario por ID
+        Comentario comentario = comentarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+
+        // Actualizar el contenido del comentario
+        comentario.setContenido(nuevoContenido);
+        comentario.setFechaComentario(LocalDateTime.now()); // Opcional: actualizar la fecha
+
+        return comentarioRepository.save(comentario);
+    }
+
+    public void eliminarComentario(Integer id) {
+        // Verificar si el comentario existe
+        Comentario comentario = comentarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+
+        // Eliminar el comentario
+        comentarioRepository.delete(comentario);
+    }
+
 }

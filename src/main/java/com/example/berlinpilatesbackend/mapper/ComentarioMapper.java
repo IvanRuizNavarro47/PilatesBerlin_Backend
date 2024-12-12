@@ -13,9 +13,9 @@ public interface ComentarioMapper {
 
     Comentario toEntity(ComentarioDTO dto);
 
-    ComentarioDTO toDTO(Comentario entity);
+    ComentarioDTO toDTO(Comentario comentario);
+
+    List<ComentarioDTO> toDTO(List<Comentario> comentarios);
 
     List<Comentario> toEntity(List<ComentarioDTO> dtos);
-
-    List<ComentarioDTO> toDTO(List<Comentario> entities);
 }
