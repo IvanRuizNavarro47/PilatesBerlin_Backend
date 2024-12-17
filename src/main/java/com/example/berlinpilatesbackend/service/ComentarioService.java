@@ -52,9 +52,10 @@ public class ComentarioService {
     public List<ComentarioDTO> listarTodosLosComentarios() {
         List<Comentario> comentarios = comentarioRepository.findAll();
         return comentarios.stream()
-                .map(comentarioMapper::toDTO)
+                .map(comentarioMapper::toDTO)  // Mapea a ComentarioDTO con usuarioId incluido
                 .collect(Collectors.toList());
     }
+
 
 
     public Comentario editarComentario(Integer id, String nuevoContenido) {

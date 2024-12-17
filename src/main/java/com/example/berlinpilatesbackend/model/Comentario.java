@@ -1,5 +1,6 @@
 package com.example.berlinpilatesbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Comentario {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "usuario_id") // Cambio: En lugar de cliente_id, ahora usuario_id
     private Usuario usuario;
 
