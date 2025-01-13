@@ -1,7 +1,10 @@
 package com.example.berlinpilatesbackend.model;
 
 import com.example.berlinpilatesbackend.enums.Rol;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,12 +41,67 @@ public class Usuario implements UserDetails {
     @Column(name = "rol")
     private Rol rol;
 
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
-    private Token token;
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore  // Ignora las inscripciones al serializar
+    private List<InscripcionClase> inscripciones;
 
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Cliente cliente; // Relación unidireccional o bidireccional con Cliente
+    @JsonIgnore
+    @OneToOne(mappedBy = "usuario")
+    private Token token;  // Ignorar la serialización del token
 
+    @OneToOne
+    @JsonIgnore
+    @JoinColumn(name = "cliente_id") // Relación unidireccional hacia Cliente
+    private Cliente cliente; // Relación con Cliente
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

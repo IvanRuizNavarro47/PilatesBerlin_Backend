@@ -13,11 +13,9 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ClaseMapper {
 
-    @Mapping(target = "clienteIds", source = "clientes", qualifiedByName = "mapClientes")
-    ClaseDTO toDTO(Clase clase);
 
-    @Mapping(target = "clientes", ignore = true)
-    Clase toEntity(ClaseDTO claseDTO);
+
+
 
     @Named("mapClientes")
     default List<Integer> mapClientes(List<Cliente> clientes) {

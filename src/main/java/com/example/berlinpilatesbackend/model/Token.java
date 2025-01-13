@@ -1,5 +1,6 @@
 package com.example.berlinpilatesbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,8 +28,9 @@ public class Token {
     @DateTimeFormat()
     private LocalDateTime fechaExpiracion;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @OneToOne
     @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    private Usuario usuario;  // Relación con Usuario
 
 }

@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 .requestMatchers("/admin/**").permitAll()
                                 .requestMatchers("/clases/gestion/**").permitAll()
                                 .requestMatchers("/clases/**").permitAll()
+                                .requestMatchers("/api/inscripciones/**").permitAll()
                                 .requestMatchers("/clases/cliente/**").permitAll()
                                 .anyRequest().authenticated()//En cambio, cuañquier otro request
 
