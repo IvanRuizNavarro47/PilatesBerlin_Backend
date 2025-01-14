@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,9 +39,28 @@ public class InscripcionController {
     private InscripcionClaseRepository inscripcionClaseRepository;
 
     // Obtener todas las clases a las que un usuario está inscrito
-    @GetMapping("/usuario/{usuarioId}")
-    public List<Clase> obtenerClasesInscritas(@PathVariable Long usuarioId) {
-        return inscripcionService.obtenerClasesInscritasPorUsuario(usuarioId);
+    @GetMapping("/usuario")
+    public ResponseEntity<List<Clase>> obtenerClasesInscritas(
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extraer el token del encabezado Authorization
+            String token = authHeader.replace("Bearer ", "");
+
+            // Extraer el username del token
+            String username = jwtService.extractTokenData(token).getUsername();
+
+            // Buscar el usuario por username
+            Usuario usuario = usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Obtener las clases usando el ID del usuario
+            List<Clase> clases = inscripcionService.obtenerClasesInscritasPorUsuario(usuario.getId());
+
+            return ResponseEntity.ok(clases);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ArrayList<>());
+        }
     }
 
     // Inscribir a un usuario en una clase
