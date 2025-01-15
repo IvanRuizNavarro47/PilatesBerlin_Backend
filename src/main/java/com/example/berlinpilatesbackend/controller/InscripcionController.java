@@ -114,9 +114,39 @@ public class InscripcionController {
     }
 
 
-    // Abandonar una clase
-    @PostMapping("/abandonar")
-    public void abandonarClase(@RequestParam Long usuarioId, @RequestParam Long claseId) {
-        inscripcionService.abandonarClase(usuarioId, claseId);
+    @DeleteMapping("/abandonar")
+    public ResponseEntity<?> abandonarClase(
+            @RequestParam Integer claseId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extraer el token y username
+            String token = authHeader.replace("Bearer ", "");
+            String username = jwtService.extractTokenData(token).getUsername();
+
+            // Obtener usuario
+            Usuario usuario = usuarioRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Obtener clase
+            Clase clase = claseRepository.findById(claseId)
+                    .orElseThrow(() -> new RuntimeException("Clase no encontrada"));
+
+            // Buscar y eliminar la inscripción
+            InscripcionClase inscripcion = inscripcionClaseRepository
+                    .findByUsuarioAndClase(usuario, clase)
+                    .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
+
+            // Eliminar la inscripción
+            inscripcionClaseRepository.delete(inscripcion);
+
+            // Aumentar la capacidad de la clase
+            clase.setCapacidadMaxima(clase.getCapacidadMaxima() + 1);
+            claseRepository.save(clase);
+
+            return ResponseEntity.ok("Clase abandonada exitosamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: " + e.getMessage());
+        }
     }
 }

@@ -37,9 +37,9 @@ public class Cliente {
     @Column(name = "email")
     private String email;
 
-    @JsonManagedReference
-    @OneToOne(mappedBy = "cliente")
-    private Usuario usuario;  // Relación con Usuario
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
 
 

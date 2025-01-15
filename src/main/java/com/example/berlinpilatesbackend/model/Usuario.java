@@ -49,10 +49,8 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario")
     private Token token;  // Ignorar la serialización del token
 
-    @OneToOne
-    @JsonIgnore
-    @JoinColumn(name = "cliente_id") // Relación unidireccional hacia Cliente
-    private Cliente cliente; // Relación con Cliente
+    @OneToOne(mappedBy = "usuario")
+    private Cliente cliente;
 
 
     public Long getId() {

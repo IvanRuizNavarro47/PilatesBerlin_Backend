@@ -11,11 +11,13 @@ import com.example.berlinpilatesbackend.repository.IClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j  // Añade esta anotación
 @Service
 public class ClienteService {
 
@@ -55,13 +57,20 @@ public class ClienteService {
     }
 
 
-    // Nuevo método para obtener solo los clientes cuyo usuario tiene el rol MONITOR
+    // Y entonces el Service quedaría así:
     public List<ClienteDTO> getMonitores() {
-        return clienteMapper.toDTO(
-                clienteRepository.findAll().stream()
-                        .filter(cliente -> cliente.getUsuario().getRol() == Rol.MONITOR)
-                        .collect(Collectors.toList())
-        );
+        try {
+            List<Cliente> monitores = clienteRepository.findByUsuarioRol(Rol.MONITOR);
+            if (monitores.isEmpty()) {
+                log.debug("No se encontraron monitores");
+            } else {
+                log.debug("Se encontraron " + monitores.size() + " monitores");
+            }
+            return clienteMapper.toDTO(monitores);
+        } catch (Exception e) {
+            log.error("Error al obtener monitores: " + e.getMessage());
+            throw new RuntimeException("Error al obtener la lista de monitores", e);
+        }
     }
 
     public Cliente createMonitor(ClienteDTO dto) {

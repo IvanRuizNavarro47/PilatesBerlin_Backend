@@ -31,6 +31,9 @@ public interface ClienteMapper {
 
     @Named("transformarUsuario")
     default UsuarioDTO transformarUsuario(Usuario entity) {
+        if (entity == null) {
+            return null;
+        }
         return usuarioMapper.toDTO(entity);
     }
 }
