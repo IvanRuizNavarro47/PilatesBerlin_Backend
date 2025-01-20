@@ -18,4 +18,7 @@ public interface InscripcionClaseRepository extends JpaRepository<InscripcionCla
 
     Optional<InscripcionClase> findByUsuarioAndClase(Usuario usuario, Clase clase);
 
+
+    boolean existsByUsuarioIdAndClaseIdAndEstadoInscripcion(Long usuarioId, Integer claseId, String estadoInscripcion);
+
 }

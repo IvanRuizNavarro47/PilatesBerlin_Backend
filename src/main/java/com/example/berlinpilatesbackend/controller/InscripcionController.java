@@ -66,53 +66,61 @@ public class InscripcionController {
     // Inscribir a un usuario en una clase
     @PostMapping("/inscribir")
     public ResponseEntity<?> inscribirseEnClase(
-            @RequestParam Integer claseId,  // Recibimos el claseId como parámetro
-            @RequestHeader("Authorization") String authHeader) {  // Recibimos el token en el header
+            @RequestParam Integer claseId,
+            @RequestHeader("Authorization") String authHeader) {
 
         try {
-            // Extraer el token del encabezado Authorization
+            // Extraer el token y username
             String token = authHeader.replace("Bearer ", "");
-
-            // Extraer el username del token
             String username = jwtService.extractTokenData(token).getUsername();
 
-            // Obtener el usuario a partir del username
+            // Obtener el usuario
             Usuario usuario = usuarioRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Obtener la clase a partir del claseId
+            // Verificar si ya está inscrito
+            boolean yaInscrito = inscripcionClaseRepository
+                    .existsByUsuarioIdAndClaseIdAndEstadoInscripcion(
+                            usuario.getId(),
+                            claseId,
+                            "activo"
+                    );
+
+            if (yaInscrito) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Ya estás inscrito en esta clase.");
+            }
+
+            // Obtener la clase
             Clase clase = claseRepository.findById(claseId)
                     .orElseThrow(() -> new RuntimeException("Clase no encontrada"));
 
-            // Verificar si la clase tiene capacidad disponible
+            // Verificar capacidad
             if (clase.getCapacidadMaxima() > 0) {
-                // Crear la inscripción
                 InscripcionClase inscripcion = new InscripcionClase();
                 inscripcion.setUsuario(usuario);
                 inscripcion.setClase(clase);
                 inscripcion.setFechaInscripcion(LocalDateTime.now());
                 inscripcion.setEstadoInscripcion("activo");
 
-                // Guardar la inscripción en la base de datos
                 inscripcionClaseRepository.save(inscripcion);
 
-                // Reducir la capacidad disponible de la clase
                 clase.setCapacidadMaxima(clase.getCapacidadMaxima() - 1);
                 claseRepository.save(clase);
 
-                // Retornar respuesta exitosa
-                return ResponseEntity.status(HttpStatus.CREATED).body("Inscripción exitosa.");
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body("Inscripción exitosa.");
             } else {
-                // Si la clase ya está llena
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La clase ya está llena.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("La clase ya está llena.");
             }
 
         } catch (Exception e) {
-            // Retornar error en caso de fallo
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: " + e.getMessage());
         }
     }
-
 
     @DeleteMapping("/abandonar")
     public ResponseEntity<?> abandonarClase(
