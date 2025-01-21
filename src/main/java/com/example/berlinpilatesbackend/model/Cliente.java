@@ -37,7 +37,8 @@ public class Cliente {
     @Column(name = "email")
     private String email;
 
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL) // Esto asegura que Usuario se persista automáticamente
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
