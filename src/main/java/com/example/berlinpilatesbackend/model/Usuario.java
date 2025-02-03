@@ -50,6 +50,7 @@ public class Usuario implements UserDetails {
     private Token token;  // Ignorar la serialización del token
 
     @OneToOne(mappedBy = "usuario")
+    @JsonBackReference
     private Cliente cliente;
 
 

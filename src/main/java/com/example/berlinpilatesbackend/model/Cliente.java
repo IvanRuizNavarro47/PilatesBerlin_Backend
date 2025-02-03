@@ -39,6 +39,7 @@ public class Cliente {
 
 
     @OneToOne(cascade = CascadeType.ALL) // Esto asegura que Usuario se persista automáticamente
+    @JsonManagedReference
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 

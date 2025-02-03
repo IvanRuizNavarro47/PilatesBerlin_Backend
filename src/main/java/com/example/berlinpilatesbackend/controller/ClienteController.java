@@ -78,6 +78,12 @@ public class ClienteController {
         return clienteRepository.save(nuevoMonitor); // Guardar el nuevo monitor en la base de datos
     }
 
+    // Obtener solo usuarios
+
+    @GetMapping("/usuarios")
+    public List<ClienteDTO> obtenerUsuarios() {
+        return clienteService.getUsuarios();
+    }
 
     // Obtener solo monitores
     @GetMapping("/monitores")

@@ -108,6 +108,22 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
+    public List<ClienteDTO> getUsuarios() {
+        try {
+            List<Cliente> usuarios = clienteRepository.findByUsuarioRol(Rol.USUARIO);
+            if (usuarios.isEmpty()) {
+                log.debug("No se encontraron usuarios");
+            } else {
+                log.debug("Se encontraron " + usuarios.size() + " usuarios");
+            }
+            return clienteMapper.toDTO(usuarios);
+        } catch (Exception e) {
+            log.error("Error al obtener usuarios: " + e.getMessage());
+            throw new RuntimeException("Error al obtener la lista de usuarios", e);
+        }
+    }
+
+
     public List<ClienteDTO> buscarClientePorFiltro(String nombre, String letraDNI) {
         if (nombre != null && letraDNI != null) {
             return clienteMapper.toDTO(clienteRepository.buscarPorLetraDNIYNombre(letraDNI, nombre));
