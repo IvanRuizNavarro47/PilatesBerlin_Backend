@@ -3,19 +3,17 @@ package com.example.berlinpilatesbackend.service;
 import com.example.berlinpilatesbackend.dto.ClienteDTO;
 import com.example.berlinpilatesbackend.enums.Rol;
 import com.example.berlinpilatesbackend.mapper.ClienteMapper;
-import com.example.berlinpilatesbackend.model.Cliente;
 import com.example.berlinpilatesbackend.model.Clase;
+import com.example.berlinpilatesbackend.model.Cliente;
 import com.example.berlinpilatesbackend.model.Usuario;
 import com.example.berlinpilatesbackend.repository.IClaseRepository;
 import com.example.berlinpilatesbackend.repository.IClienteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j  // Añade esta anotación
 @Service
@@ -48,8 +46,6 @@ public class ClienteService {
 
         return clienteRepository.save(entity); // Guarda siempre la contraseña encriptada
     }
-
-
 
 
     public List<ClienteDTO> getAll() {
@@ -97,8 +93,6 @@ public class ClienteService {
 
         return clienteRepository.save(clienteExistente);
     }
-
-
 
 
     public void deleteMonitor(Integer id) {

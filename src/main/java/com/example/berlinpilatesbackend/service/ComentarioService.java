@@ -7,16 +7,10 @@ import com.example.berlinpilatesbackend.model.Usuario;
 import com.example.berlinpilatesbackend.repository.IComentarioRepository;
 import com.example.berlinpilatesbackend.repository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,16 +40,12 @@ public class ComentarioService {
     }
 
 
-
-
-
     public List<ComentarioDTO> listarTodosLosComentarios() {
         List<Comentario> comentarios = comentarioRepository.findAll();
         return comentarios.stream()
                 .map(comentarioMapper::toDTO)  // Mapea a ComentarioDTO con usuarioId incluido
                 .collect(Collectors.toList());
     }
-
 
 
     public Comentario editarComentario(Integer id, String nuevoContenido) {

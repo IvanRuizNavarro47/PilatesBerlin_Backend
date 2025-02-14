@@ -8,7 +8,6 @@ import com.example.berlinpilatesbackend.repository.IUsuarioRepository;
 import com.example.berlinpilatesbackend.repository.InscripcionClaseRepository;
 import com.example.berlinpilatesbackend.security.jwt.JWTService;
 import com.example.berlinpilatesbackend.service.InscripcionService;
-import com.example.berlinpilatesbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

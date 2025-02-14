@@ -58,6 +58,7 @@ public class ComentarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<ComentarioDTO> editarComentario(
             @PathVariable Integer id,

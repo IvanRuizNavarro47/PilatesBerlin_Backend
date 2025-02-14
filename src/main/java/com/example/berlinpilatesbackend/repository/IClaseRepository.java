@@ -22,10 +22,4 @@ public interface IClaseRepository extends JpaRepository<Clase, Integer> {
     List<Clase> findByFecha(Date fecha);
 
 
-
-
-
-
-
-
 }
